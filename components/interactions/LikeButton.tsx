@@ -2,8 +2,7 @@
 
 import { Article } from "@/types/article";
 import { useLikes } from "@/hooks/useLikes";
-import { trackEvent } from "@/lib/analytics";
-import { buildArticleContext } from "@/lib/articles";
+import { trackArticleInteraction } from "@/lib/snowplow";
 import Icon from "@/components/ui/Icon";
 
 export default function LikeButton({ article }: { article: Article }) {
@@ -12,8 +11,10 @@ export default function LikeButton({ article }: { article: Article }) {
   function handleClick(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
+    const isNowLiked = !liked;
     toggleLike();
-    trackEvent("article_like_toggle", { ...buildArticleContext(article), liked: !liked });
+    // Only fires when liking — not when un-liking.
+    if (isNowLiked) trackArticleInteraction(article, "like");
   }
 
   return (

@@ -10,7 +10,7 @@ export {
   getRelatedArticles,
 } from "@/data/articles";
 
-/** Single source of truth for article metadata — used for both data-* attrs and trackEvent payloads. */
+/** Single source of truth for article metadata — used for both data-* attrs and the window.__SNOWPLOW_CONTEXT__ debug mirror. */
 export function buildArticleContext(article: Article): ArticleContext {
   return {
     article_id: article.id,

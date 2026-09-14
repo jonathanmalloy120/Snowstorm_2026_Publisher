@@ -2,8 +2,7 @@
 
 import { Article } from "@/types/article";
 import { useFavorites } from "@/hooks/useFavorites";
-import { trackEvent } from "@/lib/analytics";
-import { buildArticleContext } from "@/lib/articles";
+import { trackArticleInteraction } from "@/lib/snowplow";
 import Icon from "@/components/ui/Icon";
 
 export default function FavoriteButton({ article }: { article: Article }) {
@@ -13,8 +12,10 @@ export default function FavoriteButton({ article }: { article: Article }) {
   function handleClick(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
+    const isNowFavorited = !favorited;
     toggleFavorite(article.id);
-    trackEvent("favorite_toggle", { ...buildArticleContext(article), favorited: !favorited });
+    // Only fires when favoriting — not when un-favoriting.
+    if (isNowFavorited) trackArticleInteraction(article, "favorite");
   }
 
   return (

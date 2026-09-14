@@ -3,8 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Article } from "@/types/article";
 import { sharePlatforms, buildShareUrl, SharePlatform } from "@/lib/share";
-import { trackEvent } from "@/lib/analytics";
-import { buildArticleContext } from "@/lib/articles";
+import { trackArticleInteraction } from "@/lib/snowplow";
 import Icon from "@/components/ui/Icon";
 
 export default function ShareMenu({ article }: { article: Article }) {
@@ -44,7 +43,7 @@ export default function ShareMenu({ article }: { article: Article }) {
       window.open(shareUrl, "_blank", "noopener,noreferrer");
     }
 
-    trackEvent("article_share_click", { ...buildArticleContext(article), platform });
+    trackArticleInteraction(article, "share", platform);
     if (platform !== "copy-link") setOpen(false);
   }
 

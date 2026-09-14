@@ -2,8 +2,7 @@
 
 import { Article } from "@/types/article";
 import { useBookmarks } from "@/hooks/useBookmarks";
-import { trackEvent } from "@/lib/analytics";
-import { buildArticleContext } from "@/lib/articles";
+import { trackArticleInteraction } from "@/lib/snowplow";
 import Icon from "@/components/ui/Icon";
 
 export default function BookmarkButton({ article }: { article: Article }) {
@@ -13,8 +12,10 @@ export default function BookmarkButton({ article }: { article: Article }) {
   function handleClick(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
+    const isNowBookmarked = !bookmarked;
     toggleBookmark(article.id);
-    trackEvent("bookmark_toggle", { ...buildArticleContext(article), bookmarked: !bookmarked });
+    // Only fires when bookmarking — not when un-bookmarking.
+    if (isNowBookmarked) trackArticleInteraction(article, "bookmark");
   }
 
   return (
