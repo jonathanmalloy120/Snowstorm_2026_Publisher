@@ -105,6 +105,11 @@ const isPageViewOrPagePing: ContextFilter = (args) =>
  * React Strict Mode's double-invoke in dev) never leaves duplicates behind.
  */
 export function addArticleGlobalContext(article: Article): void {
+  // addGlobalContexts() is a silent no-op if no tracker exists yet — on a
+  // hard load, nothing has created one at this point in ArticleViewTracker's
+  // effect otherwise. ensureSnowplowInitialized() is idempotent, so this is
+  // safe to call unconditionally.
+  ensureSnowplowInitialized();
   const provider: FilterProvider = [isPageViewOrPagePing, buildArticleEntity(article)];
   addGlobalContexts({ [ARTICLE_GLOBAL_CONTEXT_NAME]: provider });
 }
